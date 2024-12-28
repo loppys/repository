@@ -3,7 +3,7 @@
 namespace Vengine\Libraries\Repository\Entity;
 
 use ArrayAccess;
-use Discord\Bot\System\Helpers\ConvertCaseHelper;
+use Vengine\Libraries\Repository\Helpers\ConvertCaseHelper;
 use Vengine\Libraries\Repository\AbstractRepository;
 use RuntimeException;
 use Iterator;
