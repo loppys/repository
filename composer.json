@@ -1,0 +1,15 @@
+{
+  "name": "vengine-libs/repository",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Vengine\\Libraries\\Repository\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "vengine-libs/console": "*",
+    "vengine-libs/dbal": "*"
+  },
+  "minimum-stability": "stable"
+}
