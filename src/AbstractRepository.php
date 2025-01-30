@@ -266,7 +266,7 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
         if ($table !== null && $table->getName() === $this->_table->getTableName()) {
             $schemaManager->createTable($table);
 
-            return true;
+            return $this->hasTable();
         }
 
         if (empty($this->columnMapForCreateTable)) {
