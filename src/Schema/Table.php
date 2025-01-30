@@ -19,7 +19,7 @@ class Table
     /**
      * @var Table[]
      */
-    protected array $dependecies = [];
+    protected array $dependencies = [];
 
     protected ?string $joinMethod = JoinTypeStorage::NONE;
 
@@ -90,16 +90,16 @@ class Table
         return $this->tableName;
     }
 
-    public function addTableDependecy(Table $table): static
+    public function addTableDependency(Table $table): static
     {
-        $this->dependecies[] = $table;
+        $this->dependencies[] = $table;
 
         return $this;
     }
 
-    public function getDependecies(): array
+    public function getDependencies(): array
     {
-        return $this->dependecies;
+        return $this->dependencies;
     }
 
     public function getFields(): array

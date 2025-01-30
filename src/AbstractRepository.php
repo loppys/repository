@@ -2,6 +2,10 @@
 
 namespace Vengine\Libraries\Repository;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Index;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Vengine\Libraries\DBAL\Adapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -17,6 +21,7 @@ use Vengine\Libraries\Repository\Schema\Table;
 use Vengine\Libraries\Repository\Schema\TableField;
 use Vengine\Libraries\Repository\Server\Source;
 use Vengine\Libraries\Repository\Schema\QueryBuilder as RepositoryQueryBuilder;
+use Doctrine\DBAL\Schema\Table as DBALTable;
 
 abstract class AbstractRepository implements RepositoryInterface, QueryCreatorInterface
 {
@@ -31,6 +36,8 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
     protected array $columnMap = [
         'undefined'
     ];
+
+    protected array $columnMapForCreateTable = [];
 
     protected string $entityClass = '';
 
@@ -248,6 +255,70 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
     /**
      * @throws Exception
      */
+    public function createTable(?DBALTable $table = null): bool
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+
+        if ($this->hasTable()) {
+            return true;
+        }
+
+        if ($table !== null && $table->getName() === $this->_table->getTableName()) {
+            $schemaManager->createTable($table);
+
+            return true;
+        }
+
+        if (empty($this->columnMapForCreateTable)) {
+            return false;
+        }
+
+        $columns = [];
+
+        $pkColumn = new Column($this->primaryKey, Type::getType(Types::INTEGER));
+        $pkColumn
+            ->setNotnull(true)
+            ->setUnsigned(true)
+            ->setAutoincrement(true)
+            ->setLength(11)
+        ;
+
+        $columns[] = $pkColumn;
+
+        foreach ($this->columnMapForCreateTable as $columnName => $columnInfo) {
+            if ($columnName === $this->primaryKey) {
+                continue;
+            }
+
+            if (!empty($columnInfo['type'])) {
+                $type = $columnInfo['type'];
+            } else {
+                $type = Type::getType(Types::STRING);
+            }
+
+            $columns[] = new Column($columnName, $type, $columnInfo['options'] ?? []);
+        }
+
+        $indexPk = new Index(
+            'pk_' . $this->primaryKey,
+            [$this->primaryKey],
+            isPrimary: true
+        );
+
+        $dbalTable = new DBALTable(
+            $this->_table->getTableName(),
+            $columns,
+            [$indexPk]
+        );
+
+        $schemaManager->createTable($dbalTable);
+
+        return $this->hasTable();
+    }
+
+    /**
+     * @throws Exception
+     */
     public function hasTable(): bool
     {
         return $this->connection->createSchemaManager()->tableExists($this->table);
@@ -374,8 +445,8 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
             $condition
         );
 
-        if (!empty($table->getDependecies())) {
-            foreach ($table->getDependecies() as $dependecy) {
+        if (!empty($table->getDependencies())) {
+            foreach ($table->getDependencies() as $dependecy) {
                 $this->joinTable($dependecy, $queryBuilder);
             }
         }
