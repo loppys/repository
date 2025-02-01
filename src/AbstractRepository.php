@@ -260,11 +260,11 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
      */
     public function createTable(?DBALTable $table = null): bool
     {
-        $schemaManager = $this->connection->createSchemaManager();
-
         if ($this->hasTable()) {
             return true;
         }
+
+        $schemaManager = $this->connection->createSchemaManager();
 
         if ($table !== null && $table->getName() === $this->_table->getTableName()) {
             $schemaManager->createTable($table);
