@@ -54,6 +54,9 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
 
     private RepositoryQueryBuilder $repositoryQueryBuilder;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(Adapter $db, CriteriaComparator $criteriaComparator)
     {
         $this->connection = $db->getConnection();
