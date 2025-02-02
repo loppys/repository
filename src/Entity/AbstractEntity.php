@@ -93,7 +93,7 @@ abstract class AbstractEntity implements ArrayAccess, Iterator
             return null;
         }
 
-        $method = 'get' . ConvertCaseHelper::snakeCaseToCamelCase($name);
+        $method = ConvertCaseHelper::snakeCaseToCamelCase('get' . $name);
         if (method_exists($this, $method)) {
             return $this->{$method}();
         }
@@ -117,7 +117,7 @@ abstract class AbstractEntity implements ArrayAccess, Iterator
 
         $this->setDataByName($name, $value);
 
-        $method = 'set' . ConvertCaseHelper::snakeCaseToCamelCase($name);
+        $method = ConvertCaseHelper::snakeCaseToCamelCase('set' . $name);
         if (method_exists($this, $method)) {
             $this->{$method}($value);
 
