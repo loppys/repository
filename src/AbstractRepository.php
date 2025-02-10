@@ -26,6 +26,8 @@ use Doctrine\DBAL\Schema\Table as DBALTable;
 abstract class AbstractRepository implements RepositoryInterface, QueryCreatorInterface
 {
     protected string $table = '';
+    
+    protected bool $createTableIfNotExists = false;
 
     protected Table $_table;
 
@@ -80,6 +82,10 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
             if (is_string($this->tableAlias)) {
                 $this->_table->setAliasTable($this->tableAlias);
             }
+        }
+        
+        if ($this->createTableIfNotExists) {
+            $this->createTable();
         }
     }
 
