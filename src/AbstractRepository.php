@@ -300,7 +300,7 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
             }
 
             if (!empty($columnInfo['type'])) {
-                $type = $columnInfo['type'];
+                $type = Type::getType($columnInfo['type']);
             } else {
                 $type = Type::getType(Types::STRING);
             }
