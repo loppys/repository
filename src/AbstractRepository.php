@@ -133,6 +133,20 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
     {
         return $this->newEntity($data);
     }
+    
+    public function createAndSaveEntity(array $data): ?AbstractEntity
+    {
+        $entity = $this->createEntityByArray($data);
+        
+        if ($this->saveByEntity($entity)) {
+            return $entity->setDataByName(
+                $this->primaryKey,
+                $this->getLastInsertId()
+            );
+        }
+        
+        return null;
+    }
 
     /**
      * @throws Exception
