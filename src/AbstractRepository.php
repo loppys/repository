@@ -94,7 +94,7 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
         return $this->table;
     }
 
-    public function newEntity(): ?AbstractEntity
+    public function newEntity(array $initData = []): ?AbstractEntity
     {
         if (!class_exists($this->entityClass)) {
             return null;
@@ -106,7 +106,13 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
             return null;
         }
 
-        return $entity->setColumns($this->columnMap);
+        $entity->setColumns($this->columnMap);
+
+        if (!empty($initData)) {
+            $entity->setEntityData($initData);
+        }
+
+        return $entity;
     }
 
     /**
@@ -125,13 +131,7 @@ abstract class AbstractRepository implements RepositoryInterface, QueryCreatorIn
 
     public function createEntityByArray(array $data): ?AbstractEntity
     {
-        $entity = $this->newEntity();
-
-        if ($entity !== null) {
-            return $entity->setEntityData($data);
-        }
-
-        return null;
+        return $this->newEntity($data);
     }
 
     /**
